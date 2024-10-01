@@ -1,6 +1,7 @@
 package main
 
 import (
+	"danmu-go/router"
 	"fmt"
 	"net/http"
 
@@ -12,6 +13,9 @@ func main() {
 	fmt.Println("Hello, World!")
 
 	e := echo.New()
+
+	router.Route(e)
+
 	e.GET("/", func(c echo.Context) error {
 
 		return c.String(http.StatusOK, "Hello, World!")
