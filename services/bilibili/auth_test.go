@@ -8,5 +8,7 @@ import (
 func TestGenWebTicket(t *testing.T) {
 
 	fmt.Println(GetCookie())
-	GenWebTicket()
+	fmt.Println(GenWbiKeysFromTicket())
+	fmt.Println(GenWbiKeysFromNav())
+	fmt.Println(GenWbi("https://api.bilibili.com/x/space/wbi/acc/info?mid=1850091"))
 }
