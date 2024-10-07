@@ -28,7 +28,8 @@ func GetDanmaku() {
 
 	c.OnResponse(func(r *colly.Response) {
 
-		fmt.Println(string(r.Body))
+		cookies := r.Headers.Get("Set-Cookie")
+		fmt.Println(cookies)
 	})
 
 	c.OnError(func(r *colly.Response, err error) {
