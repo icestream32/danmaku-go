@@ -34,6 +34,7 @@ const (
 	WebURL       = "https://www.bilibili.com"
 	WebTicketURL = "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
 	WebNavURL    = "https://api.bilibili.com/x/web-interface/nav"
+	UserAgent    = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 	key_id       = "ec02"
 	key          = "XgwSnGZ1p"
 )
@@ -47,33 +48,7 @@ func GenWbi(urlStr string) (string, error) {
 		return "", err
 	}
 
-	req, err := http.NewRequest("GET", newUrlStr, nil)
-	if err != nil {
-
-		fmt.Printf("Error: %s", err)
-		return "", err
-	}
-
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
-	req.Header.Set("Referer", WebURL)
-
-	response, err := http.DefaultClient.Do(req)
-	if err != nil {
-
-		fmt.Printf("Request failed: %s", err)
-		return "", err
-	}
-	defer response.Body.Close()
-
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-
-		fmt.Printf("Failed to read response: %s", err)
-		return "", err
-	}
-
-	fmt.Println(string(body))
-	return string(body), nil
+	return newUrlStr, nil
 }
 
 func GetCookie() (string, error) {
@@ -85,7 +60,7 @@ func GetCookie() (string, error) {
 		fmt.Println(err)
 		return "", err
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+	req.Header.Set("User-Agent", UserAgent)
 
 	resp, err := c.Do(req)
 	if err != nil {
@@ -134,7 +109,7 @@ func GenWbiKeysFromTicket() (string, string) {
 		fmt.Println(err)
 		return "", ""
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+	req.Header.Set("User-Agent", UserAgent)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -174,7 +149,7 @@ func GenWbiKeysFromNav() (string, string) {
 		return "", ""
 	}
 
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+	req.Header.Set("User-Agent", UserAgent)
 	req.Header.Set("Referer", "https://www.bilibili.com/")
 
 	resp, err := client.Do(req)
