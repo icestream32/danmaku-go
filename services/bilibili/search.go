@@ -31,10 +31,68 @@ func (s SearchType) String() string {
 }
 
 const (
-	WebSearchAllURL  = "https://api.bilibili.com/x/web-interface/search/all/v2"
-	WebSearchTypeURL = "https://api.bilibili.com/x/web-interface/wbi/search/type"
-	WebSeriesURL     = "https://api.bilibili.com/x/series/recArchivesByKeywords"
+	WebSearchAllURL      = "https://api.bilibili.com/x/web-interface/search/all/v2"
+	WebSearchTypeURL     = "https://api.bilibili.com/x/web-interface/wbi/search/type"
+	WebSeriesURL         = "https://api.bilibili.com/x/series/recArchivesByKeywords"
+	WebPlayerPageListURL = "https://api.bilibili.com/x/player/pagelist"
 )
+
+// GetPlayerPageList gets the play page list.
+func GetPlayerPageList(aid string) (string, error) {
+
+	cookie, err := GetCookie()
+	if err != nil {
+
+		fmt.Printf("Failed to get cookie: %s", err)
+		return "", err
+	}
+
+	query := url.Values{}
+	query.Add("aid", aid)
+
+	newUrlStr, err := signAndGenerateURL(WebPlayerPageListURL + "?" + query.Encode())
+	if err != nil {
+
+		fmt.Printf("Failed to sign and generate URL: %s", err)
+		return "", err
+	}
+
+	req, err := http.NewRequest("GET", newUrlStr, nil)
+	if err != nil {
+
+		fmt.Printf("Failed to create request: %s", err)
+		return "", err
+	}
+
+	req.Header.Set("User-Agent", UserAgent)
+	req.Header.Set("Referer", WebURL)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Cookie", cookie)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+
+		fmt.Printf("Failed to send request: %s", err)
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+
+		fmt.Printf("Failed to read response: %s", err)
+		return "", err
+	}
+
+	// check status code
+	if resp.StatusCode != http.StatusOK {
+
+		return "", errors.New("failed to get 200 OK")
+	}
+
+	return string(body), nil
+}
 
 // SearchArchivesByKeywords searches for archives by keywords.
 func SearchArchivesByKeywords(author, keyword string) (string, error) {
