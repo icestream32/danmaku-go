@@ -1,8 +1,8 @@
-package bilibili
+package search
 
 import (
+	"danmaku-go/services/bilibili/auth"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -40,32 +40,29 @@ const (
 // GetPlayerPageList gets the play page list.
 func GetPlayerPageList(aid string) (string, error) {
 
-	cookie, err := GetCookie()
+	cookie, err := auth.GetCookie()
 	if err != nil {
 
-		fmt.Printf("Failed to get cookie: %s", err)
 		return "", err
 	}
 
 	query := url.Values{}
 	query.Add("aid", aid)
 
-	newUrlStr, err := signAndGenerateURL(WebPlayerPageListURL + "?" + query.Encode())
+	newUrlStr, err := auth.SignAndGenerateURL(WebPlayerPageListURL + "?" + query.Encode())
 	if err != nil {
 
-		fmt.Printf("Failed to sign and generate URL: %s", err)
 		return "", err
 	}
 
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
 
-		fmt.Printf("Failed to create request: %s", err)
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", UserAgent)
-	req.Header.Set("Referer", WebURL)
+	req.Header.Set("User-Agent", auth.UserAgent)
+	req.Header.Set("Referer", auth.WebURL)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
 
@@ -73,7 +70,6 @@ func GetPlayerPageList(aid string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 
-		fmt.Printf("Failed to send request: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -81,7 +77,6 @@ func GetPlayerPageList(aid string) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 
-		fmt.Printf("Failed to read response: %s", err)
 		return "", err
 	}
 
@@ -101,7 +96,6 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 	json, err := SearchByType(author, BiliUser)
 	if err != nil {
 
-		fmt.Printf("Failed to search author: %s", err)
 		return "", err
 	}
 
@@ -111,10 +105,9 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 		return "", errors.New("failed to get author mid")
 	}
 
-	cookie, err := GetCookie()
+	cookie, err := auth.GetCookie()
 	if err != nil {
 
-		fmt.Printf("Failed to get cookie: %s", err)
 		return "", err
 	}
 
@@ -122,22 +115,20 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 	query.Add("mid", authorMid)
 	query.Add("keywords", keyword)
 
-	newUrlStr, err := signAndGenerateURL(WebSeriesURL + "?" + query.Encode())
+	newUrlStr, err := auth.SignAndGenerateURL(WebSeriesURL + "?" + query.Encode())
 	if err != nil {
 
-		fmt.Printf("Failed to sign and generate URL: %s", err)
 		return "", err
 	}
 
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
 
-		fmt.Printf("Failed to create request: %s", err)
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", UserAgent)
-	req.Header.Set("Referer", WebURL)
+	req.Header.Set("User-Agent", auth.UserAgent)
+	req.Header.Set("Referer", auth.WebURL)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
 
@@ -145,7 +136,6 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 
-		fmt.Printf("Failed to send request: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -153,7 +143,6 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 
-		fmt.Printf("Failed to read response: %s", err)
 		return "", err
 	}
 
@@ -169,10 +158,9 @@ func SearchArchivesByKeywords(author, keyword string) (string, error) {
 // SearchByType searches for a specific type of content on Bilibili.
 func SearchByType(keyword string, t SearchType) (string, error) {
 
-	cookie, err := GetCookie()
+	cookie, err := auth.GetCookie()
 	if err != nil {
 
-		fmt.Printf("Failed to get cookie: %s", err)
 		return "", err
 	}
 
@@ -180,22 +168,20 @@ func SearchByType(keyword string, t SearchType) (string, error) {
 	query.Add("keyword", keyword)
 	query.Add("search_type", t.String())
 
-	newUrlStr, err := signAndGenerateURL(WebSearchTypeURL + "?" + query.Encode())
+	newUrlStr, err := auth.SignAndGenerateURL(WebSearchTypeURL + "?" + query.Encode())
 	if err != nil {
 
-		fmt.Printf("Failed to sign and generate URL: %s", err)
 		return "", err
 	}
 
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
 
-		fmt.Printf("Failed to create request: %s", err)
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", UserAgent)
-	req.Header.Set("Referer", WebURL)
+	req.Header.Set("User-Agent", auth.UserAgent)
+	req.Header.Set("Referer", auth.WebURL)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
 
@@ -203,7 +189,6 @@ func SearchByType(keyword string, t SearchType) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 
-		fmt.Printf("Failed to send request: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -211,7 +196,6 @@ func SearchByType(keyword string, t SearchType) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 
-		fmt.Printf("Failed to read response: %s", err)
 		return "", err
 	}
 
@@ -227,32 +211,29 @@ func SearchByType(keyword string, t SearchType) (string, error) {
 // SearchAll searches for all types of content on Bilibili.
 func SearchAll(keyword string) (string, error) {
 
-	cookie, err := GetCookie()
+	cookie, err := auth.GetCookie()
 	if err != nil {
 
-		fmt.Printf("Failed to get cookie: %s", err)
 		return "", err
 	}
 
 	query := url.Values{}
 	query.Add("keyword", keyword)
 
-	newUrlStr, err := signAndGenerateURL(WebSearchAllURL + "?" + query.Encode())
+	newUrlStr, err := auth.SignAndGenerateURL(WebSearchAllURL + "?" + query.Encode())
 	if err != nil {
 
-		fmt.Printf("Failed to sign and generate URL: %s", err)
 		return "", err
 	}
 
 	req, err := http.NewRequest("GET", newUrlStr, nil)
 	if err != nil {
 
-		fmt.Printf("Failed to create request: %s", err)
 		return "", err
 	}
 
-	req.Header.Set("User-Agent", UserAgent)
-	req.Header.Set("Referer", WebURL)
+	req.Header.Set("User-Agent", auth.UserAgent)
+	req.Header.Set("Referer", auth.WebURL)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
 
@@ -260,7 +241,6 @@ func SearchAll(keyword string) (string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 
-		fmt.Printf("Failed to send request: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -268,7 +248,6 @@ func SearchAll(keyword string) (string, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 
-		fmt.Printf("Failed to read response: %s", err)
 		return "", err
 	}
 

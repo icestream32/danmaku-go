@@ -1,4 +1,4 @@
-package bilibili
+package auth
 
 import (
 	"fmt"

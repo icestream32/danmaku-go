@@ -1,4 +1,4 @@
-package bilibili
+package auth
 
 import (
 	"crypto/hmac"
@@ -41,7 +41,7 @@ const (
 
 func GenWbi(urlStr string) (string, error) {
 
-	newUrlStr, err := signAndGenerateURL(urlStr)
+	newUrlStr, err := SignAndGenerateURL(urlStr)
 	if err != nil {
 
 		fmt.Printf("Error: %s", err)
@@ -178,7 +178,8 @@ func GenWbiKeysFromNav() (string, string) {
 	return imgKey, subKey
 }
 
-func signAndGenerateURL(urlStr string) (string, error) {
+// SignAndGenerateURL signs and generates a URL.
+func SignAndGenerateURL(urlStr string) (string, error) {
 
 	urlObj, err := url.Parse(urlStr)
 	if err != nil {

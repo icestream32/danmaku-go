@@ -1,4 +1,4 @@
-package bilibili
+package search
 
 import (
 	"fmt"
