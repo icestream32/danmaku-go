@@ -1,7 +1,7 @@
 package router
 
 import (
-	"danmu-go/controller"
+	"danmaku-go/controller"
 	"github.com/labstack/echo/v4"
 )
 

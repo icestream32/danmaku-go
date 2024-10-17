@@ -1,7 +1,7 @@
 package main
 
 import (
-	"danmu-go/router"
+	"danmaku-go/router"
 	"fmt"
 	"net/http"
 

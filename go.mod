@@ -1,4 +1,4 @@
-module danmu-go
+module danmaku-go
 
 go 1.23
 
