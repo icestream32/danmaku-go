@@ -18,12 +18,8 @@ jobs:
       - name: Compile
         run: go build -o danmaku-go
 
-      - name: Save key to file
-        run: echo ${{ secrets.ALIYUN_SERVER_KEY }} > id_rsa
-        shell: bash
-
       - name: Upload
-        run: scp -i id_rsa danmaku-go root@www.icestream32.cn:/root/action
+        run: echo "${{ secrets.ALIYUN_SERVER_KEY }}" | scp -o "IdentityFile=/dev/stdin" danmaku-go root@www.icestream32.cn:/root/action
 
     #   - name: Connect aliyun server
     #     run: echo ${{ secrets.ALIYUN_SERVER_KEY }} | ssh -o "IdentityFile=/dev/stdin" root@www.icestream32.cn
